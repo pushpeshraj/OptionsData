@@ -1,0 +1,24 @@
+{
+  "symbol": "NIFTY",
+  "updated_ist": "22 May 2026, 03:29 PM IST (sample data)",
+  "records": [
+    {
+      "date": "2026-05-22", "expiry": "22-May-2026", "atm_strike": 23700,
+      "spot_open": 23719.30, "ce_label": "NIFTY 22-May-2026 23700 CE", "pe_label": "NIFTY 22-May-2026 23700 PE",
+      "ce_open": 142.55, "pe_open": 118.40, "open_time": "09:16:38 IST",
+      "ce_close": 96.20, "pe_close": 171.85, "spot_close": 23663.10, "close_time": "15:29:12 IST"
+    },
+    {
+      "date": "2026-05-21", "expiry": "22-May-2026", "atm_strike": 23650,
+      "spot_open": 23641.75, "ce_label": "NIFTY 22-May-2026 23650 CE", "pe_label": "NIFTY 22-May-2026 23650 PE",
+      "ce_open": 165.10, "pe_open": 150.25, "open_time": "09:16:45 IST",
+      "ce_close": 210.40, "pe_close": 102.65, "spot_close": 23702.30, "close_time": "15:29:08 IST"
+    },
+    {
+      "date": "2026-05-20", "expiry": "22-May-2026", "atm_strike": 23600,
+      "spot_open": 23588.20, "ce_label": "NIFTY 22-May-2026 23600 CE", "pe_label": "NIFTY 22-May-2026 23600 PE",
+      "ce_open": 188.75, "pe_open": 160.50, "open_time": "09:17:02 IST",
+      "ce_close": 150.30, "pe_close": 205.10, "spot_close": 23552.90, "close_time": "15:29:20 IST"
+    }
+  ]
+}
