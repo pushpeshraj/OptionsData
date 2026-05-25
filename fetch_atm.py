@@ -24,6 +24,7 @@ reliable. See README.
 
 import os
 import json
+import time
 import random
 import datetime as dt
 import zoneinfo
@@ -77,6 +78,38 @@ def fetch_chain():
     return nsepython.nse_optionchain_scrapper(SYMBOL)
 
 
+def get_chain(attempts=5):
+    """Fetch with retries: new random fingerprint + backoff each try.
+
+    Retrying helps when NSE intermittently rejects a cloud IP, but it cannot beat
+    a hard IP block — if every attempt comes back empty, the runner's IP is blocked
+    and you should run from a different IP (see README).
+
+    A proxy works with zero code changes: set an HTTPS_PROXY env var (e.g. an Indian
+    residential proxy) and requests will route through it automatically.
+    """
+    last_err = None
+    for i in range(attempts):
+        configure_headers()
+        try:
+            chain = fetch_chain()
+        except Exception as e:                       # noqa: BLE001
+            last_err, chain = e, None
+        if chain and chain.get("records", {}).get("data"):
+            return chain
+        wait = min(8 * (i + 1), 40)
+        print(f"  attempt {i + 1}/{attempts}: empty/blocked"
+              + (f" ({last_err})" if last_err else "")
+              + (f", retrying in {wait}s..." if i + 1 < attempts else ""))
+        if i + 1 < attempts:
+            time.sleep(wait)
+    raise RuntimeError(
+        f"Empty option chain after {attempts} attempts — NSE blocked this IP. "
+        "Headers/fingerprints don't fix IP blocking. Run from your own machine, a VPS, "
+        "or a self-hosted runner, or set an HTTPS_PROXY (residential/India). See README."
+    )
+
+
 def pick_atm(chain):
     """From the chain, choose the strike nearest the spot for the nearest expiry."""
     rec = chain["records"]
@@ -119,16 +152,10 @@ def save_data(data):
 
 
 def run(now=None):
-    configure_headers()
     now = now or dt.datetime.now(IST)
     today = now.date().isoformat()
 
-    chain = fetch_chain()
-    if not chain or "records" not in chain or not chain["records"].get("data"):
-        raise RuntimeError(
-            "Empty option chain — NSE likely blocked this request "
-            "(common from cloud IPs). Try re-running or run from your own machine."
-        )
+    chain = get_chain()
 
     data = load_data()
     records = data["records"]
